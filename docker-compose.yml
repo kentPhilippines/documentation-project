@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  # ... 其他服务保持不变 ...
+
+  # 开发环境后端服务
+  backend-dev:
+    image: your-docker-hub/binance-trading:latest
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      # ... 其他环境变量 ...
+    deploy:
+      restart_policy:
+        condition: on-failure
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  # 添加自动更新服务
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 30 --cleanup
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true" 
